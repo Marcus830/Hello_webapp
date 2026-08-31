@@ -1,0 +1,14 @@
+[Unit]
+Description=Banner Admin Web Application
+After=network-online.target
+
+[Container]
+Image=localhost:3000/your-org/admin-banner:latest
+Environment=WAR_URL=https://gitea.example.com/api/packages/your-org/generic/banner-admin/latest/BannerAdmin.war
+Secret=banproxy-db-password,type=env,target=BANPROXY_DB_PASSWORD
+Secret=ban-ss-user-db-password,type=env,target=BAN_SS_USER_DB_PASSWORD
+PublishPort=8080:8080
+PublishPort=8081:8081
+
+[Install]
+WantedBy=default.target
