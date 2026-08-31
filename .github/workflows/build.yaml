@@ -45,18 +45,18 @@ jobs:
         run: |
           oc project mmdev26-dev
           podman push default-route-openshift-image-registry.apps.rm3.7wse.p1.openshiftapps.com/mmdev26-dev/hello-webapp:latest
-          
-      - name: Deploy to OpenShift
+
+      - name: Deploy Workload to OpenShift
         run: |
           oc project mmdev26-dev
-          
-          # Option A: If the Deployment already exists, trigger a rollout restart to pick up the new :latest image
-          oc rollout restart deployment/hello-webapp || \
-          
-          # Option B: If the Deployment does NOT exist yet, create it from the pushed image
+
+          # Try creating the deployment (silently ignore if it already exists)
           oc create deployment hello-webapp \
-            --image=image-registry.openshift-image-registry.svc:5000/mmdev26-dev/hello-webapp:latest
-          
-          # (Optional) Expose the deployment to the internet via a Service and Route
+            --image=image-registry.openshift-image-registry.svc:5000/mmdev26-dev/hello-webapp:latest || true
+
+          # Force existing pods to restart with the newest image
+          oc rollout restart deployment/hello-webapp
+
+          # Expose network access
           oc expose deployment/hello-webapp --port=8080 || true
-          oc create route edge --service=hello-webapp || true
+          oc create route edge hello-webapp --service=hello-webapp || true
