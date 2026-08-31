@@ -30,8 +30,8 @@ jobs:
       - name: Log in to OpenShift Image Registry
         run: |
           podman login \
-            -u $(oc whoami) \
-            -p $(oc whoami -t) \
+            -u github-actions-sa \
+            -p ${{ secrets.OPENSHIFT_TOKEN }} \
             default-route-openshift-image-registry.apps.rm3.7wse.p1.openshiftapps.com
 
       - name: Build and Tag Podman Image
